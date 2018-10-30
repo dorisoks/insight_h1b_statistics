@@ -50,12 +50,10 @@ def get_header_index(list_input_header, list_target_header):
     :return: index of target header or -1 (means not existed)
     """
     curr_index = -1     # initial value for index
-
     for i in range(len(list_input_header)):
         if list_input_header[i] in list_target_header:
             # if any header in target header list is found, update index
             curr_index = i
-
     return curr_index   # if found, return true index, otherwise return -1
 
 
@@ -80,6 +78,7 @@ def format_heap_tuple_as_output(input_data, total_count):
     """
     return ';'.join([input_data[1], str(-input_data[0]), str("{:.1%}".format((-1.0 * input_data[0] / total_count)))])
 
+
 def save_top_n_tuple_to_txt(input_heap,total_count_certified, output_file_name, list_header_to_txt, k):
     with open(output_file_name, 'w') as op:
         op.write(list_header_to_txt)
@@ -87,7 +86,6 @@ def save_top_n_tuple_to_txt(input_heap,total_count_certified, output_file_name, 
             if len(input_heap) != 0:
                 current_item = heapq.heappop(input_heap)
                 op.write('\n' + format_heap_tuple_as_output(current_item, total_count_certified))
-
 
 
 def format_sort_output_line(input_data, total_count):
@@ -113,6 +111,7 @@ def save_sorted_top_n_to_txt(input_sorted_list,total_count_certified, output_fil
         op.write(list_header_to_txt)
         for current_item in input_sorted_list:
           op.write('\n' + format_sort_output_line(current_item, total_count_certified))
+
 
 def find_top_n_state_and_occupation(input_file, output_occupation, output_state):
     """
@@ -150,8 +149,6 @@ def find_top_n_state_and_occupation(input_file, output_occupation, output_state)
         #       This method will ignore the case of semicolon used inside quote mark for single column
         readCSV = csv.reader(csvfile, delimiter=';')
 
-        # To make program reusable and robust for usage on different years (with different file structures)
-        # It is more systematic to find the index of state and occupation by function, instead of manually input
         # Here use 'next' to save header line and avoid dictionary count
         header = next(readCSV, None)
 
@@ -176,6 +173,7 @@ def find_top_n_state_and_occupation(input_file, output_occupation, output_state)
         # Initiate count to store total number of certified cases for percentage calculation
         count_certified = 0
 
+
         """
         Updating dictionary and total count:
             iterate all records line by line
@@ -196,7 +194,6 @@ def find_top_n_state_and_occupation(input_file, output_occupation, output_state)
 
                 # update total count of certified cases
                 count_certified += 1
-
 
         """
         method: heap

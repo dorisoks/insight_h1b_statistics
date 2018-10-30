@@ -2,7 +2,7 @@
 1. [Project Summary](README.md#Project_Summary)
 2. [Methodology](README.md#Methodology)
 3. [Discussion](README.md#Discussion)
-4. [Work Environment](README.md#Work Environment)
+4. [Work Environment](README.md#Work_Environment)
 
 # Project Summary
 
@@ -13,23 +13,43 @@ This repo is to solve the h1b statistic challenge for Insight Data Engineering P
 The methodology to find out Top 10 states and occupations which have the most certified H1B application can be summarized as below:
 
 1. Create default dictionary to keep tracking accumulated count of desired fields for certified application
-2. Locate index of correspoding fields name in header line
-3. After reading input CSV file, separate each row by ';' with data validation 
-4. Locating index of corresponding fields 
-5. For 'certified' case, update the count for correpsonding state and occupation 
-6. Using `heap` to get top 10 states and occupations with most certified cases from updated dictionaies
-   1. Python internal method `sorted()` is tested and compared to `heap` (see [Discussion](README.md#Discussion) for details)
+2. While reading input CSV file, with ';' as delimiter: Time complexity O(N)
+   1. Locate the index of correspoding fields name in header line
+   2. Validate data in target column of each row 
+   3. For 'certified' case, update the count for correpsonding state and occupation 
+3. Using `heap` to get top 10 states and occupations from updated dictionaies:
+   1. Convert dictionary into heap: Time complexity O(M)
+   2. Then heappop 10 times to output file: Time complexity O(10 * logM)
+   3. Python internal method `sorted()` is also tested and compared to `heap` (see [Discussion](README.md#Discussion) for details)
 
-So in this solution, I will use the method of dict and heap: create two dictionaries: for occupation and for state; read csv file row by row with data cleaning: for each fow, update the count for both dictionaries; after reading all input, find the top 10 counts in dictionaries: save dictionary into heap, then pop 10 times; Time O(N + klogN)
-
-Raw data could be found [here](https://www.foreignlaborcert.doleta.gov/performancedata.cfm) under the __Disclosure Data__ tab (i.e., files listed in the __Disclosure File__ column with ".xlsx" extension). 
-For your convenience we converted the Excel files into a semicolon separated (";") format and placed them into this Google drive [folder](https://drive.google.com/drive/folders/1Nti6ClUfibsXSQw5PUIWfVGSIrpuwyxf?usp=sharing). However, do not feel limited to test your code on only the files we've provided on the Google drive 
-
-**Note:** Each year of data can have different columns. Check **File Structure** docs before development. 
+The theoretical time complexity should be O(N + M + 10 * logM), where N is number of row in input file and M is size of dictionary.
 
 # Discussion
 
-1. dictionary vs. default dictionary
+1. Two candidate methods to find top K elements:`Sorted()` vs. `Heap`
+
+   1. Time complexity difference:
+
+      1. Normal sort algorithm (quick sort, merge sort...): O(NlogN + K) time complexity O(NlogN) for sorting, and O(k) for selecting first K elements; 
+      2. Heap: O(N + KlogN) time complexity O(N) for heapify N size heap, and O(klogN) for pop first K elements; 
+
+   2. Comparing sort and heap: 
+
+      ​	sort has time complexity of O(NlogN + K) 
+
+      ​	heap has time complexity of O(KlogN + N). 
+
+      ​	So when K ~= N, they have similar time complexity; 
+
+      ​	But when K << N, heap will have advanced benefit over sort. 
+
+      in this case, for request of top 10 state and occupation, the total number of unique SOC_NAME are ~1000 in 2016. So ratio K/N ~= 0.01, which is not large enough to show the benefit of heap obviously. 
+
+      The average run time of 10 loops of sort and heap are: sort: 3.98s heap: 3.95s dictionary vs. default dictionary
+
+   3. `bucket sort` :
+
+      As we known, `bucket sort` can also be used to find top K elements. However, in this case, it is not recommended to use it because the size of bucket list has to be N (number of row in input file), not M (size of dictionary). The dictionary pair will be only saved into bucket list sparsely and a lot of space are wasted.
 
 2. Input data validation: 
 
@@ -38,41 +58,21 @@ For your convenience we converted the Excel files into a semicolon separated (";
    3. checked if the target name existed or mis-spelled
    4. Also checked the number of system files 
 
-3. Sort vs. Heap
+3. 
 
-   1. Time complexity
+4. For case of less than 10 records in dictionary
 
-   2. Python default sort vs bucket sort
+5. To sort value descending and name alphabetically
 
-   3. For sorting. 
-
-      There are three candidate methods can be used to find top K elements: 
-
-      1. Normal sort algorithm (quick sort, merge sort...): O(NlogN + K) time complexity O(NlogN) for sorting, and O(k) for selecting first K elements; 
-      2. Heap: O(N + KlogN) time complexity O(N) for heapify N size heap, and O(klogN) for pop first K elements; 
-      3. Bucket sort: O(N), worst O(NlogN): Not considered because the bucket list requires large space and only save data sparsely. 
-
-4. Comparing sort and heap: 
-
-   ​	sort has time complexity of O(NlogN + K) 
-
-   ​	heap has time complexity of O(KlogN + N). 
-
-   ​	So when K ~= N, they have similar time complexity; 
-
-   ​	But when K << N, heap will have advanced benefit over sort. 
-
-   in this case, for request of top 10 state and occupation, the total number of unique SOC_NAME are ~1000 in 2016. So ratio K/N ~= 0.01, which is not large enough to show the benefit of heap obviously. 
-
-   The average run time of 10 loops of sort and heap are: sort: 3.98s heap: 3.95s 
-
-5. Each line of the `top_10_occupations.txt` file should contain these fields in this order:
+6. Each line of the `top_10_occupations.txt` file should contain these fields in this order:
 
    1. __`TOP_OCCUPATIONS`__: Use the occupation name associated with an application's Standard Occupational Classification (SOC) code
    2. __`NUMBER_CERTIFIED_APPLICATIONS`__: Number of applications that have been certified for that occupation. An application is considered certified if it has a case status of `Certified`
    3. __`PERCENTAGE`__: % of applications that have been certified for that occupation compared to total number of certified applications regardless of occupation. 
 
    The records in the file must be sorted by __`NUMBER_CERTIFIED_APPLICATIONS`__, and in case of a tie, alphabetically by __`TOP_OCCUPATIONS`__.
+
+   
 
 # Output 
 

@@ -1,5 +1,5 @@
 # Table of Contents
-1. [Project Summary](README.md#Project Summary)
+1. [Project Summary](README.md#Project_Summary)
 2. [Methodology](README.md#Methodology)
 3. [Discussion](README.md#Discussion)
 4. [Work Environment](README.md#Work Environment)
@@ -12,11 +12,13 @@ This repo is to solve the h1b statistic challenge for Insight Data Engineering P
 
 The methodology to find out Top 10 states and occupations which have the most certified H1B application can be summarized as below:
 
-1. Create default dictionary to track accumulated count of desired fields
-2. After reading input CSV file, separate each row by ';' with data validation 
-3. Locating index of corresponding fields 
-4. For 'certified' case, update the count for correpsonding state and occupation 
-5. Using Heap to get top 10 states and occupations with most certified cases from updated dictionaies
+1. Create default dictionary to keep tracking accumulated count of desired fields for certified application
+2. Locate index of correspoding fields name in header line
+3. After reading input CSV file, separate each row by ';' with data validation 
+4. Locating index of corresponding fields 
+5. For 'certified' case, update the count for correpsonding state and occupation 
+6. Using `heap` to get top 10 states and occupations with most certified cases from updated dictionaies
+   1. Python internal method `sorted()` is tested and compared to `heap` (see [Discussion](README.md#Discussion) for details)
 
 So in this solution, I will use the method of dict and heap: create two dictionaries: for occupation and for state; read csv file row by row with data cleaning: for each fow, update the count for both dictionaries; after reading all input, find the top 10 counts in dictionaries: save dictionary into heap, then pop 10 times; Time O(N + klogN)
 
@@ -34,6 +36,7 @@ For your convenience we converted the Excel files into a semicolon separated (";
    1. directly used the converted CSV in Google drive [folder](https://drive.google.com/drive/folders/1Nti6ClUfibsXSQw5PUIWfVGSIrpuwyxf?usp=sharing).
    2. checked the number of column in each row
    3. checked if the target name existed or mis-spelled
+   4. Also checked the number of system files 
 
 3. Sort vs. Heap
 
